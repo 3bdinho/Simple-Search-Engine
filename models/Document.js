@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const indexDocument = require("../utils/Indexer");
 
 const documentSchema = new mongoose.Schema({
   title: {
@@ -22,6 +23,10 @@ const documentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+documentSchema.post("save", async function () {
+  await indexDocument(this);
 });
 
 module.exports = mongoose.model("Document", documentSchema);
