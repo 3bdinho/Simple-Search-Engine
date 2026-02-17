@@ -1,5 +1,4 @@
 const tokenize = require("./tokenizer");
-const asyncHandler = require("express-async-handler");
 const InvertedIndex = require("../models/InvertedIndex");
 
 const indexDocument = async (document) => {
@@ -21,22 +20,20 @@ const indexDocument = async (document) => {
 
     //3-Update or create inverted index entries
     for (const [term, { frequency, positions }] of Object.entries(termMap)) {
-      async ([term, { frequency, positions }]) => {
-        await InvertedIndex.findOneAndUpdate(
-          { term },
-          {
-            $push: { postings: { docId: document._id, frequency, positions } },
-            $inc: { df: 1 }, // increase doc freq
-          },
-          { $upsert: true, new: true }, //To create one if not exists
-        );
-      };
+      await InvertedIndex.findOneAndUpdate(
+        { term },
+        {
+          $push: { postings: { docId: document._id, frequency, positions } },
+          $inc: { df: 1 }, // increase doc freq
+        },
+        { upsert: true, new: true }, //To create one if not exists
+      );
     }
 
     console.log(`indexed document: ${document._id}`);
   } catch (err) {
-    console.error(`Indexing error:`, error);
-    throw error;
+    console.error(`Indexing error:`, err);
+    throw err;
   }
 };
 
