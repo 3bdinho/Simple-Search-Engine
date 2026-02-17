@@ -1,18 +1,19 @@
 const stopWords = require("./stopWords");
+const stemTokens = require("./stemmer");
 
 const tokenize = (text) => {
-  //1-convert text to lowercase
-  const lowerCase = text.toLowerCase();
-  //2-clean text form punction
-  const cleaned = lowerCase.replace(/[^a-z0-9\s]/g, "");
-  //3-split text to words
-  const words = cleaned.split(/\s+/);
-  //4-remove stop words
-  const tokenz = words.filter(
-    (word) => word.length > 0 && !stopWords.has(word),
-  );
+  const tokens = text
+    //1-Convert text to lowercase
+    .toLowerCase()
+    //2-Clean text form punctuation
+    .replace(/[^a-z0-9\s]/g, "")
+    //3-Split text into words
+    .split(/\s+/)
+    //4-Remove stop words & short words
+    .filter((word) => word.length > 2 && !stopWords.has(word));
+
   //5-stem words
-  return tokenz;
+  return stemTokens(tokens);
 };
 
 module.exports = tokenize;
