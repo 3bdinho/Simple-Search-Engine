@@ -11,6 +11,7 @@ const invertedIndexSchema = new mongoose.Schema({
     {
       docId: mongoose.Schema.Types.ObjectId,
       positions: [Number],
+      frequency: Number,
     },
   ],
   // Calculate the number of documents containing this term
