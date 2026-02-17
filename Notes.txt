@@ -1,0 +1,8 @@
+1- npm init --y
+2- npm install express --save
+3- create server for test 
+4- npm i -D nodemon
+5- make script with dev : "nodemon server.js" run it with -> npm run dev
+6- make env and .gitignore
+7- morgan to logging request
+ install mongoose and conect with db
