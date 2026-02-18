@@ -34,34 +34,27 @@ _Search_: O(M log n) where m = query terms , d = docs containing terms
 
 # project structure:
 
-REVESION PROJECT
-│
+SEACH ENGINE
 ├── config
-│ └── database.js # MongoDB connection configuration
-│
+│   └── database.js       # MongoDB connection configuration
 ├── engine
-│ └── SearchEngine.js # Core search logic (ranking, scoring, search algorithm)
-│
 ├── models
-│ ├── Document.js # Document schema (stored pages/documents)
-│ └── InvertedIndex.js # Inverted index schema for search indexing
-│
+│   ├── Document.js       # Document schema (stored pages/documents)
+│   └── InvertedIndex.js  # Inverted index schema for search indexing
 ├── Routes
-│ ├── documentRoutes.js # Document API routes (create, manage documents)
-│ └── searchRoutes.js # Search API routes
-│
+│   ├── documentRoutes.js # Document API routes (create, manage documents)
+│   └── searchRoutes.js   # Search API routes
 ├── services
-│ ├── documentService.js # Document business logic
-│ └── searchService.js # Search request handling
-│
+│   ├── documentService.js # Document business logic
+│   └── searchService.js   # Search request handling
 ├── utils
-│ ├── ApiError.js # Custom error handling
-│ ├── Indexer.js # Indexing logic for documents
-│ ├── stemmer.js # Word stemming utility
-│ ├── stopWords.js # Stop words filtering
-│ └── tokenizer.js # Text tokenization
-│
-└── server.js # Application entry point
+│   ├── ApiError.js       # Custom error handling
+│   ├── Indexer.js        # Indexing logic for documents
+│   ├── stemmer.js        # Word stemming utility
+│   ├── stopWords.js      # Stop words filtering
+│   └── tokenizer.js      # Text tokenization
+└── server.js             # Application entry point
+
 
 ## API Endpoints
 
