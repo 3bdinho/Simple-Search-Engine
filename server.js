@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 dotenv.config({ path: "config.env" });
 const dbConnection = require("./config/database");
 const documentRoute = require("./Routes/documentRoutes");
+const searchRoute = require("./Routes/searchRoutes");
 
 // Connect with db
 dbConnection();
@@ -21,6 +22,7 @@ if (process.env.NODE_ENV === "development") {
 
 // Mount Route
 app.use("/api/v1/documents", documentRoute);
+app.use("/api/v1/search", searchRoute);
 
 const PORT = process.env.PORT || 9000;
 app.listen(process.env.PORT, () => {
