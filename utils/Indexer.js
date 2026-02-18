@@ -32,7 +32,7 @@ const indexDocument = async (document) => {
           $push: { postings: { docId: document._id, frequency, positions } },
           $inc: { df: 1 }, // increase doc freq
         },
-        { upsert: true, new: true }, //To create one if not exists
+        { upsert: true,  returnDocument: "after" }, //To create one if not exists
       );
     }
 

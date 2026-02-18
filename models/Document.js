@@ -26,6 +26,7 @@ const documentSchema = new mongoose.Schema({
 });
 
 documentSchema.post("save", async function () {
+  console.log("HOOK WORKED");
   await indexDocument(this);
 });
 

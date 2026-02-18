@@ -7,7 +7,6 @@ SearchEngine core search functionality With IF,IDF ranking
 Data structures(maps),string proccessing, ranking logic
 */
 class SearchEngine {
-
   /*@desc
   - Search documents using TF-IDF ranking
   - Tokenizes query
@@ -16,7 +15,6 @@ class SearchEngine {
  */
   static async search(query, limit = 10) {
     try {
-
       const terms = tokenize(query);
 
       if (terms.length === 0) return [];
@@ -52,7 +50,6 @@ class SearchEngine {
         });
       });
 
-
       // Convert map to array and sort by score
       const rankedResults = Array.from(documentScores.values())
         .sort((a, b) => {
@@ -61,7 +58,6 @@ class SearchEngine {
         })
         .slice(0, limit);
 
-        
       //Get all Document details
       const results = await Promise.all(
         rankedResults.map(async (result) => {
@@ -81,3 +77,5 @@ class SearchEngine {
     }
   }
 }
+
+module.exports = SearchEngine;

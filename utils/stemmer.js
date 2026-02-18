@@ -1,7 +1,7 @@
-const stem = require("stemmer");
+const stem = require("stemmer").stemmer;
 
-function stemTokens(tokens) {
+const stemTokens = (tokens) => {
   return tokens.map((token) => stem(token));
-}
+};
 
 module.exports = stemTokens;
