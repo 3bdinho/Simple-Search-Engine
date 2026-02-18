@@ -1,6 +1,12 @@
 const tokenize = require("./tokenizer");
 const InvertedIndex = require("../models/InvertedIndex");
 
+/*@desc
+  - Build inverted index for a document
+  - Tokenizes content
+  - Stores term frequencies and positions
+  - Updates the inverted index collection
+*/
 const indexDocument = async (document) => {
   try {
     //1-tokenize title and content together

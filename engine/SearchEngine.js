@@ -2,66 +2,82 @@ const InvertedIndex = require("../models/InvertedIndex");
 const Document = require("../models/Document");
 const tokenize = require("../utils/tokenizer");
 
-const search = async (query, limit = 10) => {
-  try {
-    const terms = tokenize(query);
+/*@desc   
+SearchEngine core search functionality With IF,IDF ranking
+Data structures(maps),string proccessing, ranking logic
+*/
+class SearchEngine {
 
-    if (terms.length === 0) return [];
+  /*@desc
+  - Search documents using TF-IDF ranking
+  - Tokenizes query
+  - Calculates TF-IDF scores for matching documents
+  - Returns ranked results
+ */
+  static async search(query, limit = 10) {
+    try {
 
-    const totalCount = await Document.countDocuments();
+      const terms = tokenize(query);
 
-    if (totalCount === 0) return [];
+      if (terms.length === 0) return [];
 
-    const termResult = await InvertedIndex.find({ term: { $in: terms } });
+      const totalCount = await Document.countDocuments();
 
-    if (termResult.length === 0) return [];
+      if (totalCount === 0) return [];
 
-    const documentScores = new Map();
+      const termResult = await InvertedIndex.find({ term: { $in: terms } });
 
-    termResult.forEach((termData) => {
-      const idf = Math.log(totalCount / termData.df);
+      if (termResult.length === 0) return [];
 
-      termData.postings.forEach((posting) => {
-        const docId = posting.docId;
-        const tf = posting.frequency;
-        const tfIdf = tf * idf;
+      const documentScores = new Map();
 
-        if (!documentScores.has(docId)) {
-          documentScores.set(docId, {
-            docId,
-            score: 0,
-            termMatches: 0,
-          });
-        }
-        const docScore = documentScores.get(docId);
-        docScore.score += tfIdf;
-        docScore.termMatches += 1;
+      termResult.forEach((termData) => {
+        const idf = Math.log(totalCount / termData.df);
+
+        termData.postings.forEach((posting) => {
+          const docId = posting.docId;
+          const tf = posting.frequency;
+          const tfIdf = tf * idf;
+
+          if (!documentScores.has(docId)) {
+            documentScores.set(docId, {
+              docId,
+              score: 0,
+              termMatches: 0,
+            });
+          }
+          const docScore = documentScores.get(docId);
+          docScore.score += tfIdf;
+          docScore.termMatches += 1;
+        });
       });
-    });
 
-    // Convert map to array and sort by score
-    const rankedResults = Array.from(documentScores.values())
-      .sort((a, b) => {
-        if (b.score !== a.score) return b.score - a.score;
-        return b.termMatches - a.termMatches;
-      })
-      .slice(0, limit);
 
-    //Get all Document details
-    const results = await Promise.all(
-      rankedResults.map(async (result) => {
-        const doc = await Document.findById(result.docId);
-        return {
-          ...doc.toObject(),
-          score: result.score,
-          matchedTerms: result.termMatches,
-        };
-      }),
-    );
+      // Convert map to array and sort by score
+      const rankedResults = Array.from(documentScores.values())
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return b.termMatches - a.termMatches;
+        })
+        .slice(0, limit);
 
-    return results;
-  } catch (err) {
-    console.error("Search error:" , err);
-    throw err;
+        
+      //Get all Document details
+      const results = await Promise.all(
+        rankedResults.map(async (result) => {
+          const doc = await Document.findById(result.docId);
+          return {
+            ...doc.toObject(),
+            score: result.score,
+            matchedTerms: result.termMatches,
+          };
+        }),
+      );
+
+      return results;
+    } catch (err) {
+      console.error("Search error:", err);
+      throw err;
+    }
   }
-};
+}

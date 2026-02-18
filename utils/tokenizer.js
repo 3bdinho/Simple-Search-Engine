@@ -1,6 +1,13 @@
 const stopWords = require("./stopWords");
 const stemTokens = require("./stemmer");
 
+/*@desc
+  - Tokenize and preprocess text
+  - Convert to lowercase
+  - Remove special characters and punctuation
+  - Split into words
+  - Remove stop words
+*/
 const tokenize = (text) => {
   const tokens = text
     //1-Convert text to lowercase

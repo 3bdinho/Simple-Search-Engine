@@ -1,3 +1,5 @@
+
+// Common stop words that don't add meaning
 const stopWords = new Set([
   "the",
   "a",
