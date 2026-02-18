@@ -1,34 +1,39 @@
--Simple Search Engine
+# Simple Search Engine
 
 A Node.js, Express, and MongoDB search engine that demonstrates core search algorithms, ranking logic, and data structures. It helps illustrate how Google-like search engines work
 
--Key Concepts Demonstrated
+# Key Concepts Demonstrated
 
-1-Data Structures:
-Inverted Index (HashMap)-> Maps terms docs the fundamental ds for efficient full-text search
-Posting List (Array)-> For each term stores all docs containig it with freq and position info
+# 1-**Data Structures**
 
-2-String Processing
-Tokenization: Breaking text into meanigful words
-Text Normalization: Lowercaseing and removing punctuation
-Stop word removal: filtering out common words that don't add meaning
-Word Filtering: Removing very short words
+_Inverted Index (HashMap)_ Maps terms docs the fundamental ds for efficient full-text search
+_Posting List (Array)_ For each term stores all docs containig it with freq and position info
 
-3-Ranking & Searching Logic
-TF-IDF Algo:
+# 2-**String Processing**
+
+_Tokenization_: Breaking text into meanigful words
+_Text Normalization_: Lowercaseing and removing punctuation
+_Stop word removal_: filtering out common words that don't add meaning
+_Word Filtering_: Removing very short words
+
+# 3- **Ranking & Searching Logic**
+
+_TF-IDF Algo_
 TF (Term Freq) -> How often a term appers in a doc
 IDF (Inverse Doc Freq) -> How rare a term is across all docs
 Socre = TF\*IDF (documents with rare query terms rank higher)
 
-4-Algo Thinking
-Search Process:
+# 4-**Algo Thinking**
+
+_Search Process_
 User Query -> Tokenize -> Find Doc -> Calc Score -> Rank Return Result
 
 Algorithm Complexity:
-indexing: O(n) where n = total words in doc
-Search: O(M log n) where m = query terms , d = docs containing terms
+_indexing_: O(n) where n = total words in doc
+_Search_: O(M log n) where m = query terms , d = docs containing terms
 
-project structure:
+# project structure:
+
 REVESION PROJECT
 │
 ├── config
@@ -58,33 +63,46 @@ REVESION PROJECT
 │
 └── server.js # Application entry point
 
-API Endpoints
+## API Endpoints
+
 Document Management
 
---Add a Document--
+**Add a Document**
+
+```bash
 POST /api/documents
+
 {
-"title":"JavaScript Guide",
-"content":"JavaScript is a programming language used for web development",
-"url":"https://example.com/js"
+  "title": "JavaScript Fundamentals",
+  "content": "JavaScript is a versatile programming language used for web development...",
+  "url": "https://example.com/js-guide"
 }
+```
 
---Get All Document--
-Get /api/documents
+**Get All Documents**
+```bash
+GET /api/documents
+```
 
---Get a specific document--
+**Get Specific Document**
+```bash
 GET /api/documents/:id
+```
 
---Delete document-- (Later)
+**Delete Document**(Later)
+```bash
 DELETE /api/documents/:id
+```
 
---Search Operations--
+### Search Operations
 
-TF_IDF Ranked Search
+**TF_IDF Ranked Search**
+```bash
 GET /api/search?q=javascript&limit=10
+```
 
 Response includes TF-IDF socres and relevance ranking:
-json
+```json
 {
 "status": "success",
 "query": "JavaScript",
@@ -100,3 +118,4 @@ json
 }
 ]
 }
+```
