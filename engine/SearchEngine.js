@@ -7,7 +7,7 @@ SearchEngine core search functionality With IF,IDF ranking
 Data structures(maps),string proccessing, ranking logic
 */
 class SearchEngine {
-  /* @des
+  /* 
   - Search documents using TF-IDF ranking
   - Tokenizes query
   - Calculates TF-IDF scores for matching documents
@@ -62,6 +62,7 @@ class SearchEngine {
       const results = await Promise.all(
         rankedResults.map(async (result) => {
           const doc = await Document.findById(result.docId);
+          if (!doc) return null;
           return {
             ...doc.toObject(),
             score: result.score,
@@ -77,7 +78,69 @@ class SearchEngine {
     }
   }
 
-  /**   @des Delete a document and update all related inverted index entries */
+  /**
+   * Boolean search - AND/OR operations
+   * Example: "nodejs AND express" returns docs with both terms
+   */
+  static async booleanSearch(query) {
+    try {
+      // Parse query
+      const parts = query.split(/\s+(AND|OR)\s+/i);
+      const terms = [];
+      const operators = [];
+
+      //splite query into terms and operations
+      for (let i = 0; i < parts.length; i++) {
+        if (i % 2 === 0)
+          terms.push(tokenize(parts[i])); //Term
+        else operators.push(parts[i].toUpperCase()); //Operator
+      }
+
+      if (terms.length === 0) return [];
+
+      // Start with first term
+      let resultSet = new Set();
+      const firstIndexEntry = await InvertedIndex.findOne({ term: terms[0] });
+
+      if (firstIndexEntry && firstIndexEntry.postings) {
+        firstIndexEntry.postings.forEach((posting) => {
+          resultSet.add(posting.docId.toString());
+        });
+      }
+
+      // Process operators and subsequent  terms
+      for (let i = 0; i < operators.length; i++) {
+        const nextTerm = terms[i + 1];
+        const nextIndexEntry = await InvertedIndex.findOne({ term: nextTerm });
+        let nextSet = new Set();
+        if (nextIndexEntry && nextIndexEntry.postings) {
+          nextIndexEntry.postings.forEach((posting) => {
+            nextSet.add(posting.docId.toString());
+          });
+        }
+
+        if (operators[i] === "AND") {
+          // Intersection
+          resultSet = new Set([...resultSet].filter((x) => nextSet.has(x)));
+        } else {
+          // Union
+          resultSet = new Set([...resultSet, ...nextSet]);
+        }
+      }
+      // Fetch document
+      const result = await Document.find({
+        _id: { $in: Array.from(resultSet) },
+      });
+      return result;
+    } catch (err) {
+      console.error(`Boolean Search error`, err);
+      return [];
+    }
+  }
+
+  /**
+   * Delete a document and update all related inverted index entries
+   */
   static async deleteDocument(docId) {
     try {
       // Remove document
