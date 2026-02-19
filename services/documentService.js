@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/ApiError");
 const Document = require("../models/Document");
+const SearchEngine = require("../engine/SearchEngine");
 
 // @desc    Add a new document to the search index
 // @route   POST /api/documents
@@ -42,5 +43,14 @@ exports.getDocById = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: doc,
+  });
+});
+
+exports.deleteById = asyncHandler(async (req, res, next) => {
+  const doc = SearchEngine.deleteDocument(req.params.id);
+  if (!doc) return next(new ApiError("Document not found", 404));
+  res.status(200).json({
+    status: "success",
+    message: "Document deleted successfully",
   });
 });
